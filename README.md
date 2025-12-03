@@ -256,10 +256,5 @@ Em outro terminal (também com o ambiente virtual ativado), na raiz do projeto, 
 ```bash
 python -m app.ui
 ```
-
-O Gradio irá exibir no terminal um endereço local, algo como:
-
-Running on local URL:  http://127.0.0.1:7860
-
-Abra esse endereço no navegador para utilizar o chat do AdivinhaBot.
 ---
+
