@@ -61,17 +61,26 @@ def _build_new_game_message(session: models.GameSession) -> str:
 
 def process_message(db: Session, session_id: str, user_message: str) -> Tuple[str, bool, str]:
 
-    session = get_or_create_session(db, session_id)
     text = _normalize(user_message)
     max_attempts = 5
 
     if text in {"novo jogo", "reiniciar", "resetar"}:
-        session.finished = True
-        db.commit()
+        if session_id:
+            last_session = (
+                db.query(models.GameSession)
+                .filter(models.GameSession.session_id == session_id)
+                .order_by(models.GameSession.id.desc())
+                .first()
+            )
+            if last_session and not last_session.finished:
+                last_session.finished = True
+                db.commit()
 
         new_session = get_or_create_session(db, None)
         reply = _build_new_game_message(new_session)
         return reply, False, new_session.session_id
+
+    session = get_or_create_session(db, session_id)
 
     if session.finished:
         new_session = get_or_create_session(db, None)
@@ -81,7 +90,7 @@ def process_message(db: Session, session_id: str, user_message: str) -> Tuple[st
     hints = json.loads(session.hints_json)
 
     session.attempts += 1
-    db.commit()  
+    db.commit()
 
     guess = text
     correct = guess == _normalize(session.word)
@@ -98,13 +107,11 @@ def process_message(db: Session, session_id: str, user_message: str) -> Tuple[st
         reply_lines.append("Clique em **Novo jogo** para jogar novamente.")
     else:
         if session.attempts >= max_attempts:
-
             finished = True
             reply_lines.append("❌ Você usou todas as tentativas.")
             reply_lines.append(f"A palavra correta era: **{session.word}**.")
             reply_lines.append("Clique em **Novo jogo** para iniciar outra partida.")
         else:
-
             idx = min(session.attempts, len(hints) - 1)
             next_hint = hints[idx]
 

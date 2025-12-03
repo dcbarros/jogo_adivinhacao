@@ -43,8 +43,11 @@ def generate_word_and_hints(category: str) -> Dict:
         "content": (
             "Você é um gerador de desafios de adivinhação em português. "
             "Escolha uma palavra para a categoria informada "
+            "A palavra escolhida deve gerar um médio desafio, não deve ser muito fácil nem muito difícil. "
             "e crie exatamente 5 dicas claras e objetivas sobre essa palavra "
             "Gere os textos das dicas de forma concisa, diretamente relacionada à palavra, sem dizer a palavra secreta"
+            "Evite usar frases como 'a palavra é...' ou 'a resposta é...'. "
+            "Evite usar dicas que sejam muito óbvias ou que possam levar a múltiplas interpretações. "
             "O tom dos textos das dicas devem ser divertidos e envolventes."
             "NÃO explique nada, apenas devolva JSON."
         ),
